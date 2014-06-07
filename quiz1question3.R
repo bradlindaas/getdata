@@ -1,11 +1,11 @@
 fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FDATA.gov_NGAP.xlsx"
 
-if (!file.exists("../data")) {
-  dir.create("../data")
+if (!file.exists("data")) {
+  dir.create("data")
 }
 
-if (!file.exists("../data/quiz1question3.xlsx")) {
-  download.file(fileURL, destfile = "../data/quiz1question3.xlsx", method="curl")
+if (!file.exists("./data/quiz1question3.xlsx")) {
+  download.file(fileURL, destfile = "./data/quiz1question3.xlsx", method="curl")
 }
 
 # Read rows 18-23 and columns 7-15 into R and assign the result to a variable called:

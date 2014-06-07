@@ -1,11 +1,11 @@
 fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
-if (!file.exists("../data")) {
-  dir.create("../data")
+if (!file.exists("data")) {
+  dir.create("data")
 }
-if (!file.exists("../data/quiz3question1.csv")) {
-  download.file(fileURL, destfile = "../data/quiz3question1.csv", method="curl")
+if (!file.exists("./data/quiz3question1.csv")) {
+  download.file(fileURL, destfile = "./data/quiz3question1.csv", method="curl")
 }
-q1 <- read.table("../data/quiz3question1.csv", sep=",", header=TRUE)
+q1 <- read.table("./data/quiz3question1.csv", sep=",", header=TRUE)
 
 #Create a logical vector that identifies the households on greater than 
 #10 acres who sold more than $10,000 worth of agriculture products. 
