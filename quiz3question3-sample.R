@@ -1,4 +1,4 @@
-aoraw <- read.csv("./data/appleorange.csv", stringsAsFactors=FALSE, header=FALSE)
+aoraw <- read.csv("../data/appleorange.csv", stringsAsFactors=FALSE, header=FALSE)
 head(aoraw,10)
 tail(aoraw,10)
 aodata <- aoraw[3:700,]

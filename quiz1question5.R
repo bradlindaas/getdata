@@ -2,15 +2,15 @@ library(data.table)
 
 fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06pid.csv"
 
-if (!file.exists("data")) {
-  dir.create("data")
+if (!file.exists("../data")) {
+  dir.create("../data")
 }
 
-if (!file.exists("./data/quiz1question5.csv")) {
-  download.file(fileURL, destfile = "./data/quiz1question5.csv", method="curl")
+if (!file.exists("../data/quiz1question5.csv")) {
+  download.file(fileURL, destfile = "../data/quiz1question5.csv", method="curl")
 }
 
-DT <- fread("./data/quiz1question5.csv")
+DT <- fread("../data/quiz1question5.csv")
 
 resultA <- system.time(A<-tapply(DT$pwgtp15,DT$SEX,mean))
 resultB <- system.time(B<-sapply(split(DT$pwgtp15,DT$SEX),mean))
