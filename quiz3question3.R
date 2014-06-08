@@ -23,11 +23,12 @@ gdpdata$rank <- as.numeric(gdpdata$rank)
 ##### load Ed data
 eddata <- read.csv("./data/quiz3question3-2.csv", stringsAsFactors=FALSE, header=TRUE)
 
-mergedData<-merge(eddata, gdpdata, all=TRUE)
+# I fixed this to merge better
+mergedData<-merge(eddata, gdpdata, by.x="CountryCode", by.y="CountryCode")
 
-# Question 3 -- I got this wrong
+# Question 3 -- I got this wrong but I fixed it up
 results <- arrange(mergedData, gdp)
-results[13,1:2] 
+c(nrow(mergedData), results[13,2])
 
 # Question 4
 split <- split(mergedData$rank, mergedData$Income.Group)
