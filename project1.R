@@ -1,38 +1,52 @@
-
 library(reshape2)
 library(data.table)
 
-fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-if (!file.exists("../largedata")) {
-  dir.create("../largedata")
+dataDir <- "/home/rstudio/largedata/"
+dataFileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+
+if (!file.exists(dataDir)) {
+  dir.create(dataDir)
 }
-if (!file.exists("../largedata/project.zip")) {
-  download.file(fileURL, destfile = "../largedata/project.zip", method="curl")
+if (!file.exists(paste(dataDir, "project.zip", sep=""))) {
+  download.file(dataFileURL, destfile = paste(dataDir, "project.zip", sep=""), method="curl")
 }
-if (!file.exists("../largedata/UCI HAR Dataset/")) {
-  unzip("../largedata/project.zip", exdir="../largedata")
+if (!file.exists(paste(dataDir, "UCI HAR Dataset/", sep=""))) {
+  unzip(paste(dataDir, "project.zip", sep=""), exdir=dataDir)
 }
 
-# get the names from activity lablels to use as column names
-column_labels <- as.character(read.table
-      ("../largedata/UCI HAR Dataset/features.txt", header=F)$V2)
-subject <- as.character(read.table
-      ("../largedata/UCI HAR Dataset/test/subject_test.txt", header=F)$V1)
-activity <- as.character(read.table
-      ("../largedata/UCI HAR Dataset/test/y_test.txt", header=F)$V1)
-activity_labels <- read.table("../largedata/UCI HAR Dataset/activity_labels.txt", header=F)
-#activity_labels <- as.data.table(activity_labels)
+getFeatureLabels <- function () {
+    feature_labels <- as.character(read.table(paste(dataDir, "UCI HAR Dataset/features.txt", sep=""), header=F)$V2)
+    feature_labels <- gsub("\\(", "", feature_labels)
+    feature_labels <- gsub("\\)", "", feature_labels)
+    feature_labels <- gsub("\\,", "", feature_labels)
+    feature_labels <- gsub("-", "", feature_labels)
+    return (feature_labels)
+}
 
-#Clean column names by remove (),
-column_labels <- gsub("\\(", "", column_labels)
-column_labels <- gsub("\\)", "", column_labels)
-column_labels <- gsub("\\,", "", column_labels)
+getActivityData <- function (x) {
+    activity <- as.factor(read.table(paste(dataDir, "UCI HAR Dataset/", x, "/y_", x, ".txt", sep=""), header=F)$V1)
+    activity_labels <- read.table(paste(dataDir, "UCI HAR Dataset/activity_labels.txt", sep=""), header=F)
+    activity <- sapply(activity, function(y) activity_labels[y,2])
+    return (activity)
+}
 
-# read the X_test file in
-X_test <- read.table("../largedata/UCI HAR Dataset/test/X_test.txt")
-X_test <- as.data.table(X_test)
-#set the column names
-names(X_test) <- column_labels
-X_test <- cbind(activity, X_test)
-X_test <- cbind(subject, X_test)
-X_test$activity <- sapply(X_test$activity, function(x) activity_labels[x,2])
+getSubjectData <- function(x) {
+    subjects <- as.character(read.table(paste(dataDir, "UCI HAR Dataset/", x, "/subject_", x,".txt", sep=""), header=F)$V1)
+    return(as.numeric(subjects))
+}
+
+readDataFile <- function(x) {
+    dataFile <- read.table(paste(dataDir, "UCI HAR Dataset/", x, "/X_", x,".txt", sep=""), header=F, colClasses="numeric")
+    #dataFile <- as.data.table(dataFile)
+    return(dataFile)
+}    
+
+getXData <- function(dir) {
+    XData <- readDataFile(dir)
+    XData <- cbind(getSubjectData(dir), getActivityData(dir),XData)
+    setnames(XData, c("subject", "activity", getFeatureLabels()))
+}
+
+## Part 1, Merge the training and the test sets to create one data set.
+totalData <- rbind(getXData("test"), getXData("train"))
+
